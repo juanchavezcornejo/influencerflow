@@ -1,0 +1,15 @@
+# CUBE LUT - Editorial Neutral
+# Balanced colors with slightly increased contrast
+# Simple placeholder for MVP
+
+LUT_3D_SIZE 2
+LUT_3D_INPUT_RANGE 0.0 1.0
+
+0.0 0.0 0.0
+1.0 0.0 0.0
+0.0 1.0 0.0
+1.0 1.0 0.0
+0.0 0.0 1.0
+1.0 0.0 1.0
+0.0 1.0 1.0
+1.0 1.0 1.0

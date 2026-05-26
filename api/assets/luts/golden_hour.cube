@@ -1,0 +1,15 @@
+# CUBE LUT - Golden Hour
+# Golden warm tones with slightly reduced saturation
+# Simple placeholder for MVP - in production would be a full 3D LUT
+
+LUT_3D_SIZE 2
+LUT_3D_INPUT_RANGE 0.0 1.0
+
+0.0 0.0 0.0
+1.0 0.0 0.0
+0.0 1.0 0.0
+1.0 1.0 0.0
+0.0 0.0 1.0
+1.0 0.0 1.0
+0.0 1.0 1.0
+1.0 1.0 1.0
