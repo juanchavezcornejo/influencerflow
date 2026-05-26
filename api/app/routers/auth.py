@@ -5,7 +5,7 @@ from __future__ import annotations
 from http import HTTPStatus
 
 import bcrypt
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, Response
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,15 +22,16 @@ limiter = Limiter(key_func=get_remote_address)
 @router.post("/login", response_model=AuthResponse)
 @limiter.limit("5/15 minutes")
 async def login(
-    request: LoginRequest,
+    request: Request,
+    body: LoginRequest = Body(),
     db: AsyncSession = Depends(get_db),
 ) -> AuthResponse:
     """Login with email + password. Returns JWT token."""
     repo = UserRepository(db)
-    user = await repo.get_by_email(request.email)
+    user = await repo.get_by_email(body.email)
 
     if not user or not bcrypt.checkpw(
-        request.password.encode("utf-8"), user.password_hash.encode("utf-8")
+        body.password.encode("utf-8"), user.password_hash.encode("utf-8")
     ):
         raise HTTPException(status_code=HTTPStatus.UNAUTHORIZED, detail="Invalid email or password")
 

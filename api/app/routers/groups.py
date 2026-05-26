@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -58,7 +58,7 @@ class GroupDetailResponse(GroupResponse):
 async def get_session_groups(
     session_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> list[GroupDetailResponse]:
     """Get all groups in a session with nested assets."""
     user_id = get_current_user_id(authorization)
@@ -114,7 +114,7 @@ async def get_session_groups(
 async def regroup_deterministic(
     session_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Re-run deterministic grouping (free operation)."""
     user_id = get_current_user_id(authorization)
@@ -135,7 +135,7 @@ async def regroup_deterministic(
 async def create_group(
     body: CreateGroupRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> GroupResponse:
     """Create an empty group."""
     user_id = get_current_user_id(authorization)
@@ -166,7 +166,7 @@ async def update_group(
     name: str | None = None,
     order_index: int | None = None,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> GroupResponse:
     """Update group name or order."""
     get_current_user_id(authorization)  # Auth check
@@ -202,7 +202,7 @@ async def update_group(
 async def delete_group(
     group_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Delete a group (assets return to ungrouped pool)."""
     get_current_user_id(authorization)
@@ -231,7 +231,7 @@ async def add_asset_to_group(
     asset_id: str,
     position: int = 0,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Add an asset to a group at a position."""
     get_current_user_id(authorization)
@@ -253,7 +253,7 @@ async def remove_asset_from_group(
     group_id: str,
     asset_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Remove an asset from a group."""
     get_current_user_id(authorization)
@@ -269,7 +269,7 @@ async def reorder_assets(
     group_id: str,
     asset_ids: list[str],
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Reorder assets in a group."""
     get_current_user_id(authorization)
@@ -293,7 +293,7 @@ async def move_asset_to_group(
     asset_id: str,
     body: MoveAssetRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Move an asset from one group to another."""
     get_current_user_id(authorization)
@@ -314,7 +314,7 @@ async def move_asset_to_group(
 async def reorder_groups(
     group_ids: list[str],
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Reorder groups in a session."""
     get_current_user_id(authorization)

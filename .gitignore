@@ -47,6 +47,7 @@ out/
 /web/.turbo/
 /web/playwright-report/
 /web/test-results/
+/web/e2e-screenshots/
 
 # Docker
 docker-compose.override.yml

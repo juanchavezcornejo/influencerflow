@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -52,7 +52,7 @@ async def suggest_edits(
     asset_id: str,
     body: SuggestRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict[str, list[EditProposal]]:
     """Suggest edits for an asset."""
     get_current_user_id(authorization)
@@ -105,7 +105,7 @@ async def suggest_edits(
 async def get_edit_preview(
     edit_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Get preview for an edit version."""
     get_current_user_id(authorization)
@@ -129,7 +129,7 @@ async def accept_edit(
     edit_id: str,
     body: AcceptRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Accept an edit and make it current."""
     get_current_user_id(authorization)
@@ -159,7 +159,7 @@ async def reject_edit(
     edit_id: str,
     body: RejectRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Reject an edit, optionally regenerate."""
     get_current_user_id(authorization)

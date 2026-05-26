@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -53,7 +53,7 @@ async def event_stream(session_id: str, db: AsyncSession) -> None:
 async def stream_session_events(
     session_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> StreamingResponse:
     """Stream real-time events for a session via Server-Sent Events."""
     user_id = get_current_user_id(authorization)

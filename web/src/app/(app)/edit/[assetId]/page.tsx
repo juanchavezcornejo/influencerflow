@@ -1,9 +1,10 @@
 import { EditView } from "./EditView.client";
 
 interface Props {
-  params: { assetId: string };
+  params: Promise<{ assetId: string }>;
 }
 
-export default function EditPage({ params }: Props) {
-  return <EditView assetId={params.assetId} />;
+export default async function EditPage({ params }: Props) {
+  const { assetId } = await params;
+  return <EditView assetId={assetId} />;
 }

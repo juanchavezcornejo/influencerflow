@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { apiFetch } from "@/lib/api-client";
 import type { Session } from "@/types/api";
 import { DashboardContent } from "./DashboardContent.client";
@@ -19,8 +20,8 @@ async function getSessions(token: string | null) {
 }
 
 export default async function DashboardPage() {
-  // Get token from request headers (set by middleware)
-  const token = null; // TODO: extract from cookies via getServerSession or similar
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value ?? null;
 
   if (!token) {
     redirect("/login");

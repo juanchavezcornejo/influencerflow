@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -55,7 +55,7 @@ class SessionCostResponse(BaseModel):
 async def create_session(
     req: CreateSessionRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> SessionResponse:
     """Create a new session from a cloud folder."""
     user_id = get_current_user_id(authorization)
@@ -80,7 +80,7 @@ async def create_session(
 @router.get("", response_model=list[SessionResponse])
 async def list_sessions(
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> list[SessionResponse]:
     """List all sessions for current user."""
     user_id = get_current_user_id(authorization)
@@ -103,7 +103,7 @@ async def list_sessions(
 async def get_session(
     session_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> SessionResponse:
     """Get session details."""
     user_id = get_current_user_id(authorization)
@@ -127,7 +127,7 @@ async def get_session(
 async def delete_session(
     session_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Delete a session (soft delete)."""
     user_id = get_current_user_id(authorization)
@@ -147,7 +147,7 @@ async def delete_session(
 async def get_session_cost(
     session_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> SessionCostResponse:
     """Get cost breakdown for a session."""
     user_id = get_current_user_id(authorization)

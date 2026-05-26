@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_db
@@ -15,7 +15,7 @@ from app.repositories.storage import StorageCredentialsRepository
 router = APIRouter(prefix="/storage", tags=["storage"])
 
 
-def get_current_user_id(authorization: str | None = None) -> str:
+def get_current_user_id(authorization: str | None = Header(None)) -> str:
     """Extract user_id from JWT token in Authorization header."""
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(
@@ -44,7 +44,7 @@ async def start_google_oauth() -> dict:
 async def google_oauth_callback(
     code: str = Query(...),
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Handle Google OAuth callback. Exchange code for tokens."""
     user_id = get_current_user_id(authorization)
@@ -68,7 +68,7 @@ async def google_oauth_callback(
 async def get_google_folder_metadata(
     folder_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Get folder metadata (name, file count preview)."""
     user_id = get_current_user_id(authorization)
@@ -93,7 +93,7 @@ async def get_google_folder_metadata(
 @router.delete("/google-drive")
 async def disconnect_google_drive(
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Disconnect Google Drive and delete stored credentials."""
     user_id = get_current_user_id(authorization)

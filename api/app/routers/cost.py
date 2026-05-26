@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -33,7 +33,7 @@ class CostEstimateResponse(BaseModel):
 async def estimate_cost(
     body: CostEstimateRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> CostEstimateResponse:
     """Estimate cost for an operation."""
     get_current_user_id(authorization)

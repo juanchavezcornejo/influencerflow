@@ -4,6 +4,11 @@ export const metadata = {
   title: "Session — InfluencerFlow",
 };
 
-export default async function SessionPage({ params }: { params: { id: string } }) {
-  return <SessionDetail sessionId={params.id} />;
+export default async function SessionPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  return <SessionDetail sessionId={id} />;
 }

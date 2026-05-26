@@ -5,7 +5,7 @@ from __future__ import annotations
 from http import HTTPStatus
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -43,7 +43,7 @@ class AssetResponse(BaseModel):
 async def get_thumbnail(
     asset_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> FileResponse:
     """Stream thumbnail preview."""
     # TODO: verify user owns the session containing this asset
@@ -68,7 +68,7 @@ async def get_thumbnail(
 async def get_preview(
     asset_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> FileResponse:
     """Stream preview image."""
     repo = AssetRepository(db)
@@ -93,7 +93,7 @@ async def update_asset(
     asset_id: str,
     body: UpdateAssetRequest,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Update asset fields (status, etc)."""
     get_current_user_id(authorization)  # Auth check
@@ -118,7 +118,7 @@ async def update_asset(
 async def get_ungrouped_assets(
     session_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> list[AssetResponse]:
     """Get assets not in any group for a session."""
     user_id = get_current_user_id(authorization)

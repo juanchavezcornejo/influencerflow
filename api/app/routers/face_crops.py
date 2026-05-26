@@ -7,7 +7,7 @@ import logging
 from http import HTTPStatus
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -35,7 +35,7 @@ class FaceCropResponse(BaseModel):
 async def create_face_crops(
     asset_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> list[FaceCropResponse]:
     """Create face crops from asset's full-res image."""
     get_current_user_id(authorization)
@@ -86,7 +86,7 @@ async def create_face_crops(
 async def download_face_crop(
     crop_id: str,
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> FileResponse:
     """Download a face crop PNG."""
     get_current_user_id(authorization)
@@ -119,7 +119,7 @@ async def upload_corrected_face(
     crop_id: str,
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
-    authorization: str | None = None,
+    authorization: str | None = Header(None),
 ) -> dict:
     """Upload corrected face crop (e.g., from FaceApp)."""
     get_current_user_id(authorization)

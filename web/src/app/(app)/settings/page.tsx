@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { apiFetch } from "@/lib/api-client";
 import type { Settings } from "@/types/api";
 import SettingsForm from "./SettingsForm.client";
@@ -5,7 +6,19 @@ import SettingsForm from "./SettingsForm.client";
 export const metadata = { title: "Settings — InfluencerFlow" };
 
 export default async function SettingsPage() {
-  const settings = await apiFetch<Settings>("/settings");
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value ?? null;
+
+  let settings: Settings | null = null;
+  if (token) {
+    try {
+      settings = await apiFetch<Settings>("/settings", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch {
+      // Will fall through to form with defaults
+    }
+  }
 
   return (
     <main className="container py-8">
@@ -15,7 +28,15 @@ export default async function SettingsPage() {
           Configure API keys, budget caps, and caption style.
         </p>
       </header>
-      <SettingsForm initial={settings} />
+      <SettingsForm initial={settings ?? {
+        claudeApiKey: null,
+        replicateApiKey: null,
+        googleClientId: null,
+        googleClientSecret: null,
+        sessionBudgetUsd: 10.0,
+        sessionHardCapUsd: 50.0,
+        styleSeed: null,
+      }} />
     </main>
   );
 }
