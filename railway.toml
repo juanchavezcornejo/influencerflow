@@ -1,0 +1,40 @@
+# Railway service sketch.
+#
+# This file documents intended per-service configuration. The actual services
+# (api, worker, web, postgres plugin, redis plugin) must be provisioned in the
+# Railway UI, pointed at this repo, with the matching service names.
+#
+# See docs/ARCHITECTURE.md §14 for the full deployment story.
+
+[services.api]
+source = "api"
+build.command = "uv sync --frozen"
+start.command = "uv run alembic upgrade head && uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+
+[services.api.healthcheck]
+path = "/api/v1/health"
+timeout = 30
+
+[[services.api.volumes]]
+mount_path = "/data"
+name = "data"
+
+[services.worker]
+source = "api"
+build.command = "uv sync --frozen"
+start.command = "uv run celery -A app.workers.celery_app worker -Q default,sync,preview,ai,edit,export --concurrency=2 -l info"
+
+[[services.worker.volumes]]
+mount_path = "/data"
+name = "data"
+
+[services.web]
+source = "web"
+build.command = "pnpm install --frozen-lockfile && pnpm build"
+start.command = "pnpm start"
+
+[services.web.env]
+# API_BASE should point at the internal api service URL (Railway provides
+# `http://api.railway.internal:$PORT` by default when services share a project).
+API_BASE = "${{api.RAILWAY_PRIVATE_DOMAIN}}"
+NEXT_PUBLIC_API_BASE = "/api/v1"

@@ -1,0 +1,42 @@
+# Filename patterns for MVP
+# Regex patterns for parsing filenames and folder names
+
+patterns:
+  - name: "apple_iphone"
+    regex: '^IMG_(\d{4})$'  # IMG_1234
+    groups:
+      sequence: 1
+  
+  - name: "apple_iphone_live"
+    regex: '^IMG_(\d{4})HEIC$'  # IMG_1234HEIC
+    groups:
+      sequence: 1
+
+  - name: "google_pixel"
+    regex: '^PXL_(\d{8})_(\d{6}).*$'  # PXL_20250416_120000...
+    groups:
+      date: 1
+      sequence: 2
+
+  - name: "canon_dslr"
+    regex: '^Canon_(\d{8})_(\d{6}).*$'
+    groups:
+      date: 1
+      sequence: 2
+
+folder_patterns:
+  - name: "trip_yyyy_location"
+    regex: '^(\d{4})_([A-Za-z\s]+)$'  # 2025_Paris
+    groups:
+      date: 1
+      location: 2
+
+  - name: "trip_location_dates"
+    regex: '^([A-Za-z\s]+)_(\d{8})-(\d{8})$'  # Paris_20250416-20250423
+    groups:
+      location: 1
+      date: 2
+
+grouping_rules:
+  time_gap_hours: 2
+  gps_distance_meters: 500
